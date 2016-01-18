@@ -1,0 +1,55 @@
+#enable mouse mode in tmux
+set -g mouse on
+
+bind -n WheelUpPane if-shell -F -t = "#{mouse_any_flag}" "send-keys -M" "if -Ft= '#{pane_in_mode}' 'send-keys -M' 'select-pane -t=; copy-mode -e; send-keys -M'"
+bind -n WheelDownPane select-pane -t= \; send-keys -M
+
+#unbind default prefix and set it to Ctrl+a
+unbind C-b
+set -g prefix C-a
+bind C-a send-prefix
+
+# split window and fix path for tmux 1.9
+bind | split-window -h -c "#{pane_current_path}"
+bind - split-window -v -c "#{pane_current_path}"
+unbind '"'
+unbind %
+
+
+# reload config file (change file location to your the tmux.conf you want to use)
+bind r source-file ~/.tmux.conf
+
+# switch panes using Alt-arrow without prefix
+bind -n M-Left resize-pane -Z \; select-pane -L \; resize-pane -Z 
+bind -n M-Right resize-pane -Z \; select-pane -R \; resize-pane -Z 
+bind -n M-Up resize-pane -Z \; select-pane -U \; resize-pane -Z 
+bind -n M-Down resize-pane -Z \; select-pane -D \; resize-pane -Z 
+
+# don't rename windows automatically
+set-option -g allow-rename off
+
+# for vim
+set -g @resurrect-strategy-vim 'session'
+# for neovim
+set -g @resurrect-strategy-nvim 'session'
+
+set -g @resurrect-capture-pane-contents 'on'
+
+# enable tmux-battery
+set -g status-right 'Batt: #{battery_icon} #{battery_percentage} #{battery_remain} | %a %h-%d %H:%M '
+
+
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-battery'
+
+# Other examples:
+# set -g @plugin 'github_username/plugin_name'
+# set -g @plugin 'git@github.com/user/plugin'
+# set -g @plugin 'git@bitbucket.com/user/plugin'
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '~/.tmux/plugins/tpm/tpm'
